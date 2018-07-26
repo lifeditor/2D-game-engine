@@ -1,0 +1,34 @@
+
+.content {
+  position: absolute;
+  width: 384px;
+  height: 100%;
+  top: 0;
+  left: 50%;
+  margin: 0 0 0 -192px;
+  border: 1px solid green;
+  display: table;
+}
+
+.map_container {
+  position: relative;
+  width: 384px;
+  height: 384px;
+  display: table-row;
+}
+
+.map_title {
+  position: relative;
+  heigth: 50px;
+  display: table-row;
+}
+
+.map_info {
+  position: relative;
+  heigth: 50px;
+  display: table-row;
+}
+
+canvas {
+  border: 3px solid green;
+}
