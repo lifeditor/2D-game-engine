@@ -55,7 +55,6 @@ window.map = (function () {
       var obj =
         getCoords(tileId - firstGid, columnCount);
 
-      tile.image = image;
       tile.x = obj.x;
       tile.y = obj.y;
       obj =
@@ -63,6 +62,7 @@ window.map = (function () {
       tile.dX = obj.x;
       tile.dY = obj.y;
       tile.id = tileId;
+      tile.image = image;
 
       map.tiles.push(tile);
     });

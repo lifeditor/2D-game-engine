@@ -45,9 +45,9 @@ window.game = (function () {
     update();
   };
 
-  var initPlayer = function (entity) {
+  var initPlayer = function (entity, flag) {
     if (entity.type === window.entity.getPlayerType()) {
-      player = entity;
+      player = (flag) ? entity : null;
     }
   };
 
@@ -93,12 +93,12 @@ window.game = (function () {
 
     addEntity: function (entity) {
       entities.push(entity);
-      initPlayer(entity);
+      initPlayer(entity, true);
     },
 
     destroyEntity: function (entity) {
       entities.splice(entities.indexOf(entity), 1);
-      player = null;
+      initPlayer(entity, false);
     },
 
     getEntity: function (obj, x, y) {
