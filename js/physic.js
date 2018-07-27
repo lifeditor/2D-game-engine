@@ -14,29 +14,31 @@ window.physic = (function () {
 
     update: function (obj) {
 
+      var objectX = obj.x;
+      var objectY = obj.y;
       var objectMoveX = obj.moveX;
       var objectMoveY = obj.moveY;
       var objectWidth = obj.width;
       var objectHeight = obj.height;
 
-      if (objectMoveX === 0 && objectMoveY === 0) {
-        return;
-      }
-
-      var newX = obj.x + Math.floor(objectMoveX * obj.speed);
-      var newY = obj.y + Math.floor(objectMoveY * obj.speed);
-
-      var entity = window.game.getEntity(obj, newX, newY);
+      var entity = window.game.getEntity(obj, objectX, objectY);
 
       if (entity && obj.onEntityCatch) {
         obj.onEntityCatch(entity);
       }
 
+      if (objectMoveX === 0 && objectMoveY === 0) {
+        return;
+      }
+
+      var calcX = objectX + Math.floor(objectMoveX * obj.speed);
+      var calcY = objectY + Math.floor(objectMoveY * obj.speed);
+
       var tileIds = [
-        window.map.getTileId(newX, newY),
-        window.map.getTileId(newX + objectWidth, newY),
-        window.map.getTileId(newX, newY + objectHeight),
-        window.map.getTileId(newX + objectWidth, newY + objectHeight)
+        window.map.getTileId(calcX, calcY),
+        window.map.getTileId(calcX + objectWidth, calcY),
+        window.map.getTileId(calcX, calcY + objectHeight),
+        window.map.getTileId(calcX + objectWidth, calcY + objectHeight)
       ];
 
       function isMove(id) {
@@ -48,8 +50,8 @@ window.physic = (function () {
       }
 
       if (tileIds.every(isMove)) {
-        obj.x = newX;
-        obj.y = newY;
+        obj.x = calcX;
+        obj.y = calcY;
       } else {
         var objectType = obj.type;
 

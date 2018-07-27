@@ -104,17 +104,11 @@ window.game = (function () {
     getEntity: function (obj, x, y) {
 
       function selectEntity(entity) {
-        if (entity.type !== obj.type) {
-          if (x + obj.width < entity.x ||
-              y + obj.height < entity.y ||
-              x > entity.x + entity.width ||
-              y > entity.y + entity.height
-          ) {
-            return false;
-          }
-          return true;
-        }
-        return false;
+        return (entity.type !== obj.type) ?
+          !((x + obj.width < entity.x) ||
+            (y + obj.height < entity.y) ||
+            (x > entity.x + entity.width) ||
+            (y > entity.y + entity.height)) : false;
       }
 
       return entities.filter(selectEntity)[0];
