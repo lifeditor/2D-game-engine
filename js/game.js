@@ -121,7 +121,6 @@ window.game = (function () {
     },
 
     init: function () {
-      container.focus();
       window.map.init();
       window.sprite.init();
       window.event.init(canvas);

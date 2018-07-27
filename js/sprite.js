@@ -14,7 +14,7 @@ window.sprite = (function () {
     var frames = JSON.parse(data).frames;
 
     for (var name in frames) {
-      if (name) {
+      if (frames[name]) {
         var frame = frames[name].frame;
 
         sprites

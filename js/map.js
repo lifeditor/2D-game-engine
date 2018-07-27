@@ -10,71 +10,61 @@ window.map = (function () {
     IMAGE_PATH: 'data/'
   };
 
-  var mapData = null;
-  var tileData = null;
-  var tileSize = {width: 0, height: 0};
-  var columnCount = 0;
-  var tilesets = [];
   var info = document.querySelector('.map_info').children[0];
 
-  var parse = function (data) {
-    mapData = JSON.parse(data);
-    columnCount = mapData.width;
-    tileSize.width = mapData.tilewidth;
-    tileSize.height = mapData.tileheight;
+  var map = null;
+  var tileSize = {width: 0, height: 0};
+  var mapColumnCount = 0;
 
-    mapData.tilesets.forEach(function (tileset) {
+  var parse = function (data) {
+    map = JSON.parse(data);
+    mapColumnCount = map.width;
+    tileSize.width = map.tilewidth;
+    tileSize.height = map.tileheight;
+
+    map.tilesets.forEach(function (tileset) {
       var img = new Image();
       img.src = Url.IMAGE_PATH + tileset.image;
-      var tilesetObject = {
-        firstgid: tileset.firstgid,
-        image: img,
-        name: tileset.name,
-        columnCount: Math.floor(tileset.imagewidth / tileSize.width),
-        rowCount: Math.floor(tileset.imageheight / tileSize.height)
-      };
-      tilesets.push(tilesetObject);
+      tileset.image = img;
     });
 
-    mapData.layers.forEach(function (layer) {
+    map.layers.forEach(function (layer) {
       if (layer.type === 'tilelayer') {
-        tileData = layer.data;
+        createTiles(layer.data);
       } else if (layer.type === 'objectgroup') {
         window.entity.createEntities(layer.objects);
       }
     });
   };
 
-  var getTile = function (tileId) {
-    var getTileset = function (tileset) {
-      if (tileset.firstgid <= tileId) {
-        return true;
-      }
-      return false;
+  var getCoords = function (index, count) {
+    return {x: (index % count) * tileSize.width,
+      y: Math.floor(index / count) * tileSize.height
     };
-
-    var tile = {};
-    var tileset = tilesets.filter(getTileset)[0];
-    var id = tileId - tileset.firstgid;
-
-    tile.img = tileset.image;
-    tile.x = (id % tileset.columnCount) * tileSize.width;
-    tile.y = Math.floor(id / tileset.columnCount) * tileSize.height;
-
-    return tile;
   };
 
-  var drawTiles = function (ctx, tiles) {
-    if (tiles === null || (!tiles)) {
-      return;
-    }
-    tiles.forEach(function (tileId, i) {
-      var tile = getTile(tileId);
-      var pX = (i % columnCount) * tileSize.width;
-      var pY = Math.floor(i / columnCount) * tileSize.height;
+  var createTiles = function (data) {
+    var mapTileset = map.tilesets[0];
+    var firstGid = mapTileset.firstgid;
+    var columnCount = mapTileset.columns;
+    var image = mapTileset.image;
 
-      ctx.drawImage(tile.img, tile.x, tile.y, tileSize.width,
-          tileSize.height, pX, pY, tileSize.width, tileSize.height);
+    map.tiles = [];
+    data.forEach(function (tileId, arrayIndex) {
+      var tile = {};
+      var obj =
+        getCoords(tileId - firstGid, columnCount);
+
+      tile.image = image;
+      tile.x = obj.x;
+      tile.y = obj.y;
+      obj =
+        getCoords(arrayIndex, mapColumnCount);
+      tile.dX = obj.x;
+      tile.dY = obj.y;
+      tile.id = tileId;
+
+      map.tiles.push(tile);
     });
   };
 
@@ -93,14 +83,17 @@ window.map = (function () {
     },
 
     render: function (ctx) {
-      drawTiles(ctx, tileData);
+      map.tiles.forEach(function (tile) {
+        ctx.drawImage(tile.image, tile.x, tile.y, tileSize.width,
+            tileSize.height, tile.dX, tile.dY, tileSize.width, tileSize.height);
+      });
     },
 
     getTileId: function (x, y) {
-      var index = Math.floor(y / tileSize.width) * columnCount +
+      var index = Math.floor(y / tileSize.width) * mapColumnCount +
                   Math.floor(x / tileSize.height);
 
-      return tileData[index];
+      return map.tiles[index].id;
     }
 
   };
