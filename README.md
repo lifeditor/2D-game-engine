@@ -1,3 +1,3 @@
 # game-engine-example
-Демка
+Demo
 https://game-demo-javascript.herokuapp.com/
